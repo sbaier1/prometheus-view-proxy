@@ -1,0 +1,13 @@
+routes:
+  dashboard:
+    query: 'test456'
+    template: |
+      {{ with values }}
+
+      {{ end }}
+  other:
+    query: 'test123'
+    template: |
+      {{ with values }}
+
+      {{ end }}
