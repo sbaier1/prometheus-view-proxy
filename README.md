@@ -17,5 +17,3 @@ Currently, only the gotemplate engine is supported, but support for jsonnet is p
 ## TODO
 
 * Proper logging framework
-* Caching layer for responses to queries (to reduce pressure on the upstream Prometheus)
-* Instrumenting this service with metrics

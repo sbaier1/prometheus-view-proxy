@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"github.com/sbaier1/prometheus-view-proxy/viewproxy"
 	"log"
 	"net"
 	"net/http"
@@ -11,33 +10,24 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/sbaier1/prometheus-view-proxy/viewproxy"
 	"gopkg.in/yaml.v2"
 )
 
 func main() {
 	var (
 		insecureListenAddress string
-		upstream              string
 		config                string
 	)
 
 	flagset := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	flagset.StringVar(&insecureListenAddress, "insecure-listen-address", "", "The address the prometheus-view-proxy HTTP server should listen on.")
-	flagset.StringVar(&upstream, "upstream", "", "The upstream URL to proxy to.")
 	flagset.StringVar(&config, "config", "", "The config to load for queries to perform.")
 	//nolint: errcheck // Parse() will exit on error.
 	flagset.Parse(os.Args[1:])
 	if config == "" {
 		log.Fatalf("-config flag cannot be empty")
-	}
-
-	upstreamURL, err := url.Parse(upstream)
-	if err != nil {
-		log.Fatalf("Failed to build parse upstream URL: %v", err)
-	}
-
-	if upstreamURL.Scheme != "http" && upstreamURL.Scheme != "https" {
-		log.Fatalf("Invalid scheme for upstream URL %q, only 'http' and 'https' are supported", upstream)
 	}
 
 	f, err := os.Open(config)
@@ -53,8 +43,19 @@ func main() {
 		log.Fatalf("Could not decode config at %s: %v", config, err)
 	}
 
+	upstream := cfg.Prometheus.URL
+	upstreamURL, err := url.Parse(upstream)
+	if err != nil {
+		log.Fatalf("Failed to build parse upstream URL: %v", err)
+	}
+
+	if upstreamURL.Scheme != "http" && upstreamURL.Scheme != "https" {
+		log.Fatalf("Invalid scheme for upstream URL %q, only 'http' and 'https' are supported", upstream)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/", viewproxy.NewRoutes(upstreamURL, cfg))
+	mux.Handle("/metrics", promhttp.Handler())
 
 	srv := &http.Server{Handler: mux}
 

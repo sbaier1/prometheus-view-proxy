@@ -1,23 +1,24 @@
+# Configure the frontend routes at which to display the custom views onto metrics
 routes:
   dashboard:
     queries:
     # Queries to run that will be put into the context of the template
     - name: 'single'
-      query: 'sum(com_hivemq_sessions_overall_current{job=~".+"})'
+      query: 'sum(go_gc_duration_seconds_count)'
     - name: 'all'
-      query: 'com_hivemq_sessions_overall_current'
+      query: 'prometheus_http_request_duration_seconds_sum'
     # Somewhat similar to the Prometheus metric exposition format
     template: |
       {{- range $query := . }}
       {{- range $response := $query.Response -}}
-      # {{ $response.Metric }}
-      {{ $query.Name }} {{ $response.Value }}
+      # {{ $query.Name }}
+      {{ $response.Metric }} {{ $response.Value }}
       {{ end }}
       {{ end }}
   other:
     queries:
     - name: 'single'
-      query: 'sum(com_hivemq_sessions_overall_current{job=~".+"})'
+      query: 'prometheus_http_request_duration_seconds_sum'
     template: |
       {{- range $query := . }}
       {{- range $response := $query.Response -}}
@@ -25,3 +26,8 @@ routes:
       {{ $query.Name }} {{ $response.Value }}
       {{ end }}
       {{ end }}
+# Configure the connection to the backend Prometheus
+prometheus:
+  url: http://localhost:9091
+# How stale responses to the queries are allowed to be
+responseExpiryTime: 5s
