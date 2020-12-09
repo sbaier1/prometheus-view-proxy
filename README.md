@@ -14,6 +14,15 @@ See [sample.yaml](sample.yaml) for an example configuration file.
 
 Currently, only the gotemplate engine is supported, but support for jsonnet is planned.
 
+## Metrics
+
+| Name                                 | Description                                                               |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| viewproxy_backend_queries_count      | The total number of queries made to the backend                           |
+| viewproxy_backend_warnings_count     | The total number of warnings received from the backend                    |
+| viewproxy_backend_errors_count       | The total number of errors received from the backend                      |
+| viewproxy_backend_invalid_type_count | The total number of responses with invalid type received from the backend |
+
 ## TODO
 
 * Proper logging framework
