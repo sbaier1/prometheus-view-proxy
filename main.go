@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/sbaier1/prometheus-view-proxy/viewproxy"
 	"log"
 	"net"
 	"net/http"
@@ -45,7 +46,7 @@ func main() {
 	}
 	defer f.Close()
 
-	var cfg Config
+	var cfg viewproxy.Config
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(&cfg)
 	if err != nil {
@@ -53,7 +54,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", NewRoutes(upstreamURL, cfg))
+	mux.Handle("/", viewproxy.NewRoutes(upstreamURL, cfg))
 
 	srv := &http.Server{Handler: mux}
 
