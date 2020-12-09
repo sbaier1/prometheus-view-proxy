@@ -3,7 +3,7 @@ routes:
     queries:
     # Queries to run that will be put into the context of the template
     - name: 'single'
-      query: 'sum(com_hivemq_sessions_overall_current{job="hivemq-dk-example-cluster-metrics"})'
+      query: 'sum(com_hivemq_sessions_overall_current{job=~".+"})'
     - name: 'all'
       query: 'com_hivemq_sessions_overall_current'
     # Somewhat similar to the Prometheus metric exposition format
@@ -17,7 +17,7 @@ routes:
   other:
     queries:
     - name: 'single'
-      query: 'sum(com_hivemq_sessions_overall_current{job="hivemq-dk-example-cluster-metrics"})'
+      query: 'sum(com_hivemq_sessions_overall_current{job=~".+"})'
     template: |
       {{- range $query := . }}
       {{- range $response := $query.Response -}}

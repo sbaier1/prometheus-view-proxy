@@ -22,7 +22,7 @@ func main() {
 	)
 
 	flagset := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-	flagset.StringVar(&insecureListenAddress, "insecure-listen-address", "", "The address the prom-label-proxy HTTP server should listen on.")
+	flagset.StringVar(&insecureListenAddress, "insecure-listen-address", "", "The address the prometheus-view-proxy HTTP server should listen on.")
 	flagset.StringVar(&upstream, "upstream", "", "The upstream URL to proxy to.")
 	flagset.StringVar(&config, "config", "", "The config to load for queries to perform.")
 	//nolint: errcheck // Parse() will exit on error.
