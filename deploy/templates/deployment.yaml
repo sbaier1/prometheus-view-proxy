@@ -35,8 +35,10 @@ spec:
           command:
           - /prometheus-view-proxy
           args:
-          - -config /mnt/config.yaml
-          - -insecure-listen-address 0.0.0.0:8080
+          - -config
+          - /mnt/config.yaml
+          - -insecure-listen-address
+          - 0.0.0.0:8080
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
