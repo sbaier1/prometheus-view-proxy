@@ -20,9 +20,10 @@ import (
 
 // Handler params
 type templateHandler struct {
-	queries  []Queries
-	template *template.Template
-	cache    cache.LoadingCache
+	queries         []Queries
+	template        *template.Template
+	cache           cache.LoadingCache
+	responseHeaders map[string]string
 }
 
 // Response passed as array to the template engine
@@ -46,6 +47,9 @@ func (th *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Write the template result directly to the response
+	for k, v := range th.responseHeaders {
+		w.Header().Set(k, v)
+	}
 	err := th.template.Execute(w, responses)
 	if err != nil {
 		log.Fatalf("Failed to execute template for data '%s': %v", responses, err)
@@ -114,7 +118,7 @@ func NewRoutes(upstream *url.URL, config Config) http.Handler {
 			log.Fatalf("Route /metrics is reserved for this application's metrics")
 		}
 		log.Printf("Adding route '/%s'", path)
-		mux.Handle("/"+path, &templateHandler{queries: cfg.Queries, template: t, cache: c})
+		mux.Handle("/"+path, &templateHandler{queries: cfg.Queries, template: t, cache: c, responseHeaders: cfg.ResponseHeaders})
 	}
 	log.Printf("View proxy routes initialized")
 	return mux

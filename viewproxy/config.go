@@ -16,8 +16,9 @@ type Prometheus struct {
 // Config for the proxy
 type Config struct {
 	Routes map[string]struct {
-		Queries  []Queries `yaml:"queries"`
-		Template string    `yaml:"template"`
+		Queries         []Queries         `yaml:"queries"`
+		Template        string            `yaml:"template"`
+		ResponseHeaders map[string]string `yaml:"responseHeaders"`
 	} `yaml:"routes"`
 	ResponseExpiryTime time.Duration `yaml:"responseExpiryTime"`
 	Prometheus         Prometheus    `yaml:"prometheus"`

@@ -26,3 +26,4 @@ Currently, only the gotemplate engine is supported, but support for jsonnet is p
 ## TODO
 
 * Proper logging framework
+* Consider switching to gorilla mux so regex can be used in path specs (and maybe can be captured and used in the routes/queries?)
