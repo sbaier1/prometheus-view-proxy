@@ -29,9 +29,9 @@ config:
         {{ $query.Name }} {{ $response.Value }}
         {{ end }}
         {{ end }}
-  # Configure the connection to the backend Prometheus
+  # Configure the connection to the backend Prometheus. You must set your service DNS name (preferably FQDN) here first
   prometheus:
-    url: http://localhost:9091
+    url: http://prometheus.default.svc.cluster.local.:9090
   # How stale responses to the queries are allowed to be
   responseExpiryTime: 5s
 
@@ -72,6 +72,14 @@ securityContext:
 service:
   type: ClusterIP
   port: 80
+
+serviceMonitor:
+  # Deploy a ServiceMonitor for Prometheus if the resource type exists.
+  enabled: true
+  jobLabel: ""
+  # Scrape interval
+  interval: 30s
+  annotations: {}
 
 ingress:
   enabled: false
