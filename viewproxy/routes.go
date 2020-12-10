@@ -32,9 +32,6 @@ type queryResponse struct {
 	Response model.Vector
 }
 
-type queryWithContext struct {
-}
-
 func (th *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var responses []queryResponse = make([]queryResponse, len(th.queries))
 	// Run queries and save results
