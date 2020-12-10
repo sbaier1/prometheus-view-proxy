@@ -1,6 +1,6 @@
 # Prometheus view proxy
 
-![https://hub.docker.com/r/sbaier1/prometheus-view-proxy](https://img.shields.io/docker/pulls/sbaier1/prometheus-view-proxy.svg)
+[![Docker Hub](https://img.shields.io/docker/pulls/sbaier1/prometheus-view-proxy.svg)](https://hub.docker.com/r/sbaier1/prometheus-view-proxy)
 
 A simple proxy that queries an upstream Prometheus with the given instant queries and passing the result vectors to a template.
 
