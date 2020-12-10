@@ -102,8 +102,8 @@ func NewRoutes(upstream *url.URL, config Config) http.Handler {
 	}
 	log.Printf("Setting response cache expiry duration to %s", config.ResponseExpiryTime)
 	c := cache.NewLoadingCache(load,
-		cache.WithMaximumSize(1024),                           // Limit number of entries in the cache.
-		cache.WithExpireAfterWrite(config.ResponseExpiryTime), // Expire entries after 2 minutes since last created.
+		cache.WithMaximumSize(1024),
+		cache.WithExpireAfterWrite(config.ResponseExpiryTime),
 	)
 
 	for path, cfg := range config.Routes {
