@@ -16,6 +16,16 @@ See [sample.yaml](sample.yaml) for an example configuration file.
 
 Currently, only the gotemplate engine is supported, but support for jsonnet is planned.
 
+## Deploying
+
+### Helm
+
+```sh
+helm repo add prom-view-proxy https://sbaier1.github.io/prometheus-view-proxy
+# Set at the very least the upstream prometheus URL. You should create the config for your requirements and supply them directly instead if possible though.
+helm upgrade --install prometheus-view-proxy prom-view-proxy/prometheus-view-proxy --set config.prometheus.url=http://prometheus.namespace.svc.cluster.local:9090
+```
+
 ## Metrics
 
 | Name                                 | Description                                                               |
