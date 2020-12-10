@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   prometheus-view-proxy:
   - apiVersion: v2
+    appVersion: 0.2.0
+    created: "2020-12-10T12:46:36.822067578Z"
+    description: Prometheus View Proxy provides unauthenticated, customized views into your Prometheus metrics
+    digest: 34dc52ff2f2aba66654c0ff269ea1fadff127131e68c67cc3561997ecdd39e95
+    name: prometheus-view-proxy
+    type: application
+    urls:
+    - https://github.com/sbaier1/prometheus-view-proxy/releases/download/prometheus-view-proxy-0.2.0/prometheus-view-proxy-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     appVersion: 0.1.0
     created: "2020-12-10T09:39:54.947523974Z"
     description: Prometheus View Proxy provides unauthenticated, customized views into your Prometheus metrics
