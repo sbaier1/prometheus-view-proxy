@@ -97,7 +97,7 @@ func NewRoutes(upstream *url.URL, config Config) http.Handler {
 		}
 		log.Printf("Response to query %s was of unexpected type %s. Will not pass response to template", query, valType)
 		invalidTypeCounter.Inc()
-		return nil, fmt.Errorf("Query %s did not return a vector result", query)
+		return nil, fmt.Errorf("query %s did not return a vector result", query)
 	}
 	log.Printf("Setting response cache expiry duration to %s", config.ResponseExpiryTime)
 	c := cache.NewLoadingCache(load,
