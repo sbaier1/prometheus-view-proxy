@@ -3,12 +3,14 @@ package viewproxy
 import (
 	"context"
 	"fmt"
+	"github.com/Masterminds/sprig"
 	"log"
 	"net/http"
 	"net/url"
 	"text/template"
 	"time"
 
+	mux "github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/api"
 	prometheus "github.com/prometheus/client_golang/api/prometheus/v1"
 	prom_metrics "github.com/prometheus/client_golang/prometheus"
@@ -32,8 +34,15 @@ type queryResponse struct {
 	Response model.Vector
 }
 
+type templateContext struct {
+	Responses []queryResponse
+	// Variables received in the HTTP query path
+	Variables map[string]string
+}
+
 func (th *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var responses []queryResponse = make([]queryResponse, len(th.queries))
+	var responses = make([]queryResponse, len(th.queries))
+	requestVariables := mux.Vars(r)
 	// Run queries and save results
 	for index, q := range th.queries {
 		val, err := th.cache.Get(q.Query)
@@ -47,7 +56,7 @@ func (th *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for k, v := range th.responseHeaders {
 		w.Header().Set(k, v)
 	}
-	err := th.template.Execute(w, responses)
+	err := th.template.Execute(w, templateContext{Responses: responses, Variables: requestVariables})
 	if err != nil {
 		log.Fatalf("Failed to execute template for data '%s': %v", responses, err)
 	}
@@ -55,7 +64,7 @@ func (th *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // NewRoutes generates the root HTTP handler for the proxy
 func NewRoutes(upstream *url.URL, config Config) http.Handler {
-	mux := http.NewServeMux()
+	mux := mux.NewRouter()
 	backendQueriesCounter := promauto.NewCounter(prom_metrics.CounterOpts{
 		Name: "viewproxy_backend_queries_count",
 		Help: "The total number of queries made to the backend",
@@ -106,8 +115,14 @@ func NewRoutes(upstream *url.URL, config Config) http.Handler {
 		cache.WithExpireAfterWrite(config.ResponseExpiryTime),
 	)
 
+	funcMap := sprig.HermeticTxtFuncMap()
+	// Helper function to get a string-type label from a metric object with the return value as a string-primitive
+	funcMap["getLabel"] = func(label string, labels model.Metric) string {
+		value := labels[model.LabelName(label)]
+		return string(value)
+	}
 	for path, cfg := range config.Routes {
-		t, err := template.New(cfg.Template).Parse(cfg.Template)
+		t, err := template.New(cfg.Template).Funcs(funcMap).Parse(cfg.Template)
 		if err != nil {
 			log.Fatalf("Failed to parse template: %s: %v", cfg.Template, err)
 		}

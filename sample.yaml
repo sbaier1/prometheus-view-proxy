@@ -2,14 +2,14 @@
 routes:
   dashboard:
     queries:
-    # Queries to run that will be put into the context of the template
-    - name: 'single'
-      query: 'sum(go_gc_duration_seconds_count)'
-    - name: 'all'
-      query: 'prometheus_http_request_duration_seconds_sum'
+      # Queries to run that will be put into the context of the template
+      - name: 'single'
+        query: 'sum(go_gc_duration_seconds_count)'
+      - name: 'all'
+        query: 'prometheus_http_request_duration_seconds_sum'
     # Somewhat similar to the Prometheus metric exposition format
     template: |
-      {{- range $query := . }}
+      {{- range $query := .Responses }}
       {{- range $response := $query.Response -}}
       # {{ $query.Name }}
       {{ $response.Metric }} {{ $response.Value }}
@@ -17,15 +17,19 @@ routes:
       {{ end }}
     responseHeaders:
       Access-Control-Allow-Origin: "*"
-  other:
+  # Example that shows how to use gorilla-mux's request-matching variables.
+  varExample/{endpoint}:
     queries:
-    - name: 'single'
-      query: 'prometheus_http_request_duration_seconds_sum'
+      - name: 'single'
+        query: 'prometheus_http_request_duration_seconds_sum'
     template: |
-      {{- range $query := . }}
+      {{- range $query := .Responses }}
       {{- range $response := $query.Response -}}
+      {{/* Only return the metrics from the backend response where the path parameter "endpoint" is equal to the "endpoint" label in the metric's label-set (essentially filtering for a label in a response) */}}
+      {{- if eq (index $.Variables "endpoint") (getLabel "endpoint" $response.Metric) -}}
       # {{ $response.Metric }}
       {{ $query.Name }} {{ $response.Value }}
+      {{ end }}
       {{ end }}
       {{ end }}
 # Configure the connection to the backend Prometheus

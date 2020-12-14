@@ -8,13 +8,18 @@ The queries and templates are exposed under various configurable HTTP routes sim
 
 The goal of this application is to provide custom, limited insights into Prometheus metrics for building for example customer-facing metric views.
 
-The simple routing using the HTTP GET path allows simply hooking this up using an ingress controller on K8s.
+The simple routing using the HTTP GET path allows simply hooking this up using an ingress controller on K8s. [Gorilla MUX](https://github.com/gorilla/mux) is used as the HTTP router, thus allowing for request parameters (and corresponding templating) as well.
 
 See [sample.yaml](sample.yaml) for an example configuration file.
 
 ## Templating
 
 Currently, only the gotemplate engine is supported, but support for jsonnet is planned.
+
+## gotemplate functions
+
+* The [sprig functions](http://masterminds.github.io/sprig/) are available in templates
+* There is also a custom `getLabel(string, Metric) string` function for getting the value of a label from a Prometheus metric as a string.
 
 ## Deploying
 
@@ -37,5 +42,4 @@ helm upgrade --install prometheus-view-proxy prom-view-proxy/prometheus-view-pro
 
 ## TODO
 
-* Proper logging framework
-* Consider switching to gorilla mux so regex can be used in path specs (and maybe can be captured and used in the routes/queries?)
+* Proper leveled logging framework. Fatal logs will lead to exit/restarts at the moment.

@@ -3,5 +3,5 @@ name: prometheus-view-proxy
 type: application
 description: Prometheus View Proxy provides unauthenticated, customized views into your Prometheus metrics
 
-version: 0.2.1
-appVersion: 0.2.0
+version: 0.2.2
+appVersion: 0.3.0
